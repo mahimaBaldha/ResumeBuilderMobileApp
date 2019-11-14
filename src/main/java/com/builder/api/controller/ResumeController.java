@@ -138,6 +138,22 @@ public class ResumeController {
 		return new ResponseEntity<Object>(op, HttpStatus.OK); 
 	}
 	
+	@GetMapping(path= "/getSkills/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> getSkillPage(@PathVariable("id") String id) {
+		
+		List<Optional<SkillType>> list = resumeservice.getSkills(id);
+		if(list == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("No skill details added");
+		}else {
+			op.setError(false);
+			op.setMessage("success");
+			op.setData(list);
+		}
+		return new ResponseEntity<Object>(op, HttpStatus.OK); 
+	}
+	
 	@GetMapping(path= "/getResume/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getResumeDetails(@PathVariable("id") String id) {
 		
@@ -189,12 +205,12 @@ public class ResumeController {
 	// ADD REQUESTS
 	
 	
-	@PostMapping(path= "/addResume", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addResumeDetails(@RequestBody Users user, @RequestBody Awards award,
+	@PostMapping(path= "/addResume/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addResumeDetails(@PathVariable("id") String id,@RequestBody Users user, @RequestBody Awards award,
 			@RequestBody Interests interest, @RequestBody Experience experience , @RequestBody EduType education,
 		    @RequestBody ProjectType projects , @RequestBody SkillType skills) {
 		
-		 if(resumeservice.addResume(user, award, interest, experience, education, projects, skills)) {
+		 if(resumeservice.addResume(id, user, award, interest, experience, education, projects, skills)) {
 			 	op.setError(false);
 				op.setMessage("success");
 				op.setData("Data saved");
@@ -207,9 +223,9 @@ public class ResumeController {
 		return new ResponseEntity<Output>(op, HttpStatus.OK); 
 	}
 	
-	@PostMapping(path= "/addAwards", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addAwardDetails(@RequestBody Awards awards){
-			Awards award = resumeservice.addAwards(awards);
+	@PostMapping(path= "/addAwards/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addAwardDetails(@PathVariable("id") String id, @RequestBody Awards awards){
+			Awards award = resumeservice.addAwards(id, awards);
 		if(award == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -222,9 +238,9 @@ public class ResumeController {
 		return new ResponseEntity<Output>(op, HttpStatus.OK);
 	}
 	
-	@PostMapping(path= "/addInterests", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addInterestDetails(@RequestBody Interests interest){
-		Interests interests = resumeservice.addInterests(interest);
+	@PostMapping(path= "/addInterests/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addInterestDetails(@PathVariable("id") String id, @RequestBody Interests interest){
+		Interests interests = resumeservice.addInterests(id, interest);
 		if(interests == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -238,9 +254,9 @@ public class ResumeController {
 		
 	}
 	
-	@PostMapping(path= "/addExperience", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addExperienceDetails(@RequestBody Experience exp){
-		Experience experience = resumeservice.addExperience(exp);
+	@PostMapping(path= "/addExperience/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addExperienceDetails(@PathVariable("id") String id, @RequestBody Experience exp){
+		Experience experience = resumeservice.addExperience(id, exp);
 		if(experience == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -254,9 +270,9 @@ public class ResumeController {
 		
 	}
 	
-	@PostMapping(path= "/addEducation", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addEducationDetails(@RequestBody EduType education){
-		EduType educations = resumeservice.addEducationDetails(education);
+	@PostMapping(path= "/addEducation/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addEducationDetails(@PathVariable("id") String id,@RequestBody EduType education){
+		EduType educations = resumeservice.addEducationDetails(id, education);
 		if(educations == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -269,9 +285,9 @@ public class ResumeController {
 		return new ResponseEntity<Output>(op, HttpStatus.OK);
 	}
 	
-	@PostMapping(path= "/addProject", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addProjectDetails(@RequestBody ProjectType project){
-		ProjectType projects = resumeservice.addProjectDetails(project);
+	@PostMapping(path= "/addProject/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addProjectDetails(@PathVariable("id") String id, @RequestBody ProjectType project){
+		ProjectType projects = resumeservice.addProjectDetails(id, project);
 		if(projects == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -284,9 +300,9 @@ public class ResumeController {
 		return new ResponseEntity<Output>(op, HttpStatus.OK);
 	}
 	
-	@PostMapping(path= "/addSkill", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addSkillDetails(@RequestBody SkillType skill){
-		SkillType skills = resumeservice.addSkillDetails(skill);
+	@PostMapping(path= "/addSkill/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addSkillDetails(@PathVariable("id") String id, @RequestBody SkillType skill){
+		SkillType skills = resumeservice.addSkillDetails(id, skill);
 		if(skills == null) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -299,11 +315,117 @@ public class ResumeController {
 		return new ResponseEntity<Output>(op, HttpStatus.OK);
 	}
 	
-//	@PostMapping(path= "/getResume/{id}", consumes = "application/json", produces = "application/json")
-//	public ResponseEntity<?> addExperienceDetails(@PathVariable("id") String id ,@RequestBody Experience experience){
-//		Experience experience = resumeservice.addExperience(id, experience);
-//		
-//		return new ResponseEntity<Experience>(experience, HttpStatus.OK);
-//	}
+	
+	// EDIT DATA 
+	
+	
+	@PostMapping(path= "/editExperience/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editExperienceDetails(@PathVariable("id") String id ,@RequestBody Experience experience){
+		Experience exp = resumeservice.editExperience(id, experience);
+		if(exp == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(exp);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
+	
+	@PostMapping(path= "/editAwards/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editAwardsDetails(@PathVariable("id") String id ,@RequestBody Awards award){
+		Awards awards = resumeservice.editAward(id, award );
+		
+		if(awards == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(awards);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
+	
+	@PostMapping(path= "/editInterest/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editInterestDetails(@PathVariable("id") String id ,@RequestBody Interests Interest){
+		Interests interest = resumeservice.editInterest(id, Interest );
+		
+		if(interest == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(interest);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
+	
+	
+	
+	@PostMapping(path= "/editEducation/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editEducationDetails(@PathVariable("id") String id ,@RequestBody EduType edu_details){
+		EduType education = resumeservice.editEducationDetails(id, edu_details );
+		
+		if(education == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(education);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(path= "/editProject/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editProjectDetails(@PathVariable("id") String id ,@RequestBody ProjectType proj_details){
+		ProjectType project = resumeservice.editProjectDetails(id, proj_details );
+		
+		if(project == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(project);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(path= "/editSkill/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editSkillDetails(@PathVariable("id") String id ,@RequestBody SkillType skill){
+		SkillType skills = resumeservice.editSkillDetails(id, skill);
+		
+		if(skills == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(skills);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
 
+	@GetMapping(path= "/deleteProject/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> deleteProjectpage(@PathVariable("id") int id) {
+		
+		resumeservice.deleteProject(id);
+		op.setError(false);
+		op.setMessage("success");
+		op.setData("Project deleted successfully");
+		
+		return new ResponseEntity<Output>(op, HttpStatus.OK); 
+	}
 }

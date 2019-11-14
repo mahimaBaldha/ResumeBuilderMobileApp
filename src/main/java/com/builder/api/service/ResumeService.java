@@ -149,6 +149,87 @@ public class ResumeService {
 	
 	
 	
+	public Users addUserDetail(Users u1) {
+		
+		List<Users> list = userrepository.findAll();
+
+		for(Users u : list) {
+			if(u.isSession()) {
+				u.setAddress(u1.getAddress());
+				u.setDob(u1.getDob());
+				userrepository.save(u);
+				return u;
+			}
+		}
+		
+		return u1;
+	}
+	
+	
+	
+	public Awards addAwards(String id,Awards awards) {
+		return awardsrepo.save(awards);
+	}
+	
+	public Interests addInterests(String id,Interests interest) {
+		return intrepo.save(interest);
+	}
+	
+	public Experience addExperience(String id, Experience exp) {
+		return exprepo.save(exp);
+	}
+	
+	public EduType addEducationDetails(String id, EduType edu) {
+		
+		edutyperepository.save(edu);
+		
+		Education education = new Education();
+		education.setResume_id(id);
+		education.setEdutype_id(edu.getId());
+		educationrepo.save(education);
+		
+		return edu;
+	}
+	
+	public ProjectType addProjectDetails(String id, ProjectType projects) {
+		
+		projtyperepository.save(projects);
+		Project project = new Project();
+		project.setResume_id(id);
+		project.setProjtype_id(projects.getId());
+		projectrepo.save(project);
+			
+		return projects;
+	}
+	
+	public SkillType addSkillDetails(String id, SkillType skills) {
+		
+		skilltyperepository.save(skills);
+		
+		Skill skill = new Skill();
+		skill.setResume_id(id);
+		skill.setSkilltype_id(skills.getId());
+		skillrepo.save(skill);
+		
+		return skills;
+	}
+	
+	public boolean addResume(String id, Users user, Awards award, Interests interest, Experience experience, EduType education,  ProjectType projects, SkillType skills) {
+		
+		Users userDetail = addUserDetail(user);
+		Awards awards = addAwards(id, award);
+		Interests interests = addInterests(id, interest);
+		Experience exp = addExperience(id, experience);
+		EduType edu = addEducationDetails(id, education);
+		ProjectType projtype = addProjectDetails(id, projects);
+		SkillType skill = addSkillDetails(id, skills);
+		
+		if(userDetail != null && awards != null && interests != null && exp != null && edu != null && projtype != null && skill != null) {
+			return true;
+		}
+		return false;
+	}
+
 	public Users editUser(Users u1) {
 		
 		List<Users> list = userrepository.findAll();
@@ -165,104 +246,116 @@ public class ResumeService {
 		
 		return u1;
 	}
-	
-	
-	
-	public Awards addAwards(Awards awards) {
-		return awardsrepo.save(awards);
-	}
-	
-	public Interests addInterests(Interests interest) {
-		return intrepo.save(interest);
-	}
-	
-	public Experience addExperience(Experience exp) {
-		return exprepo.save(exp);
-	}
-	
-	public EduType addEducationDetails(EduType edu) {
-		List<Users> list = userrepository.findAll();
-		Users user = new Users();
-		for(Users u : list) {
-			if(u.isSession()) {
-				user = u;
-				break;
+
+	public Experience editExperience(String id, Experience experience) {
+		List<Experience> list = exprepo.findAll();
+		for(Experience exp : list) {
+			if(exp.getResume_id().equals(id)) {
+				exp.setExp(experience.getExp());
+				exprepo.save(exp);
+				return exp;
 			}
 		}
-		edutyperepository.save(edu);
-		List<Resume> list1 = resumerepo.findAll();
+		return null;
+	}
+
+
+	public Awards editAward(String id, Awards awards) {
+		List<Awards> list = awardsrepo.findAll();
+		for(Awards award : list) {
+			if(award.getResume_id().equals(id)) {
+				award.setAwards(awards.getAwards());
+				awardsrepo.save(award);
+				return award;
+			}
+		}
+		return null;
+	}
+	
+	
+	public Interests editInterest(String id, Interests interests) {
+		List<Interests> list = intrepo.findAll();
+		for(Interests interest : list) {
+			if(interest.getResume_id().equals(id)) {
+				interest.setInterest(interests.getInterest());
+				intrepo.save(interest);
+				return interest;
+			}
+		}
+		return null;
+	}
+
+
+	public EduType editEducationDetails(String id, EduType edu_details) {
+		List<Education> list = educationrepo.findAll();
+		for(Education education : list) {
+			if(education.getResume_id().equals(id)) {
+				Optional<EduType> eduDetails = edutyperepository.findById(education.getEdutype_id());
+				EduType edu = eduDetails.get();
+				edu.setCpi(edu_details.getCpi());
+				edu.setDegree(edu_details.getDegree());
+				edu.setUniversity(edu_details.getUniversity());
+				edu.setYear(edu_details.getYear());
+				edutyperepository.save(edu);
+				return edu;
+			}
+		}
+		return null;
+	}
+
+
+	public ProjectType editProjectDetails(String id, ProjectType proj) {
+		List<Project> list = projectrepo.findAll();
+		for(Project Project : list) {
+			if(Project.getResume_id().equals(id)) {
+				Optional<ProjectType> projDetails = projtyperepository.findById(Project.getProjtype_id());
+				ProjectType project = projDetails.get();
+				project.setDescription(proj.getDescription());
+				project.setDuration(proj.getDuration());
+				project.setMentor(proj.getMentor());
+				project.setTeam_size(proj.getTeam_size());
+				project.setTitle(proj.getTitle());
+				projtyperepository.save(project);
+				return project;
+			}
+		}
+		return null;
+	}
+
+
+	public SkillType editSkillDetails(String id, SkillType skills) {
+		List<Skill> list = skillrepo.findAll();
+		for(Skill Skill : list) {
+			if(Skill.getResume_id().equals(id)) {
+				Optional<SkillType> skillDetails = skilltyperepository.findById(Skill.getSkilltype_id());
+				SkillType skill = skillDetails.get();
+				skill.setArea_of_interest(skills.getArea_of_interest());
+				skill.setFramework(skills.getFramework());
+				skill.setProg_lang(skills.getProg_lang());
+				skill.setTechnologies(skills.getTechnologies());
+				skill.setTools(skills.getTools());
+				skilltyperepository.save(skill);
+				return skill;
+			}
+		}
+		return null;
+	}
+	
+	// DELETE 
+	
+	
+	public void deleteProject(int id) {
 		
-		for(Resume r  : list1) {
-			if(r.getUser_id().equals(user.getId())) {
-				Education education = new Education();
-				education.setResume_id(r.getId());
-				education.setEdutype_id(edu.getId());
-				educationrepo.save(education);
+		List<Project> list = projectrepo.findAll();
+		for(Project project: list) {
+			if(project.getProjtype_id() == id) {
+				projectrepo.deleteById(project.getId());
 			}
 		}
-		return edu;
+		projtyperepository.deleteById(id);
+		
 	}
 	
-	public ProjectType addProjectDetails(ProjectType projects) {
-		List<Users> list = userrepository.findAll();
-		Users user = new Users();
-		for(Users u : list) {
-			if(u.isSession()) {
-				user = u;
-				break;
-			}
-		}
-		projtyperepository.save(projects);
-		List<Resume> list1 = resumerepo.findAll();
-		
-		for(Resume r  : list1) {
-			if(r.getUser_id().equals(user.getId())) {
-				Project project = new Project();
-				project.setResume_id(r.getId());
-				project.setProjtype_id(projects.getId());
-				projectrepo.save(project);
-			}
-		}
-		return projects;
-	}
 	
-	public SkillType addSkillDetails(SkillType skills) {
-		List<Users> list = userrepository.findAll();
-		Users user = new Users();
-		for(Users u : list) {
-			if(u.isSession()) {
-				user = u;
-				break;
-			}
-		}
-		skilltyperepository.save(skills);
-		List<Resume> list1 = resumerepo.findAll();
-		
-		for(Resume r  : list1) {
-			if(r.getUser_id().equals(user.getId())) {
-				Skill skill = new Skill();
-				skill.setResume_id(r.getId());
-				skill.setSkilltype_id(skills.getId());
-				skillrepo.save(skill);
-			}
-		}
-		return skills;
-	}
-	
-	public boolean addResume(Users user, Awards award, Interests interest, Experience experience, EduType education,  ProjectType projects, SkillType skills) {
-		
-		Users userDetail = editUser(user);
-		Awards awards = addAwards(award);
-		Interests interests = addInterests(interest);
-		Experience exp = addExperience(experience);
-		EduType edu = addEducationDetails(education);
-		ProjectType projtype = addProjectDetails(projects);
-		SkillType skill = addSkillDetails(skills);
-		
-		if(userDetail != null && awards != null && interests != null && exp != null && edu != null && projtype != null && skill != null) {
-			return true;
-		}
-		return false;
-	}
 	
 }

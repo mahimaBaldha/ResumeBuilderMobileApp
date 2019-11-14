@@ -1,7 +1,5 @@
 package com.builder.api.controller;
 
-
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -193,8 +191,6 @@ public class LoginController {
 	
 	@PostMapping(path= "/editUserDetails/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> editUserDetails(@RequestBody Users user) {
-		
-		
 		return new ResponseEntity<String>("user details added", HttpStatus.OK);
 	}
 	
