@@ -149,7 +149,7 @@ public class ResumeService {
 	
 	
 	
-	public Users addUserDetail(Users u1) {
+	public Users addUserDetail(String id, Users u1) {
 		
 		List<Users> list = userrepository.findAll();
 
@@ -216,7 +216,7 @@ public class ResumeService {
 	
 	public boolean addResume(String id, Users user, Awards award, Interests interest, Experience experience, EduType education,  ProjectType projects, SkillType skills) {
 		
-		Users userDetail = addUserDetail(user);
+		Users userDetail = addUserDetail(id, user);
 		Awards awards = addAwards(id, award);
 		Interests interests = addInterests(id, interest);
 		Experience exp = addExperience(id, experience);
@@ -230,7 +230,7 @@ public class ResumeService {
 		return false;
 	}
 
-	public Users editUser(Users u1) {
+	public Users editUser(String id, Users u1) {
 		
 		List<Users> list = userrepository.findAll();
 
@@ -354,6 +354,16 @@ public class ResumeService {
 		}
 		projtyperepository.deleteById(id);
 		
+	}
+
+
+	public Optional<ProjectType> getProject(List<Optional<ProjectType>> list, int p_id) {
+		for(Optional<ProjectType> l: list) {
+			if(l.get().getId() == p_id) {
+				return l;
+			}
+		}
+		return null;
 	}
 	
 	

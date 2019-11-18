@@ -2,6 +2,7 @@ package com.builder.api.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import com.builder.api.service.UserService;
 @RequestMapping("/user")
 public class LoginController {
 
+	static String resume_id;
 	static Output op = new Output();
 	
 	@Autowired
@@ -37,15 +39,6 @@ public class LoginController {
 	@Autowired
 	private ResumeRepository resumerepo;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String login() {
-		return "Home";
-	}
-	
-	@RequestMapping("/index")
-	public String home() {
-		return "redirect:";
-	}
 	
 	@GetMapping(path= "/getResumeId", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getResumeId() {
@@ -118,12 +111,12 @@ public class LoginController {
 		}
 		
 		if(u.get().isOnetime()) {
-			op.setError(false);
-			op.setMessage("success");
-			op.setData("Build your resume first!");
-			return new ResponseEntity<Output>(op, HttpStatus.OK);
+			resume_id =  UUID.randomUUID().toString();
+			userservice.BuildResume(resume_id, u.get());
 		}
+		
 		List<Resume> resume = resumerepo.findAll();
+		u.get().setOnetime(false);
 		u.get().setSession(true);
 		userrepository.save(u.get());
 		for(Resume r : resume) {
@@ -159,7 +152,9 @@ public class LoginController {
 	@GetMapping(path= "/getUserById/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getUserPage(@PathVariable("id") String id) {
 		
-		Optional<Users> u = userrepository.findById(id);
+		Optional<Resume> resumeDetails = resumerepo.findById(id);
+		
+		Optional<Users> u = userrepository.findById(resumeDetails.get().getUser_id());
 		if(!u.isPresent()) {
 			op.setError(true);
 			op.setMessage("not success");
@@ -187,11 +182,6 @@ public class LoginController {
 		op.setMessage("success");
 		op.setData(users);
 		return new ResponseEntity<Output>(op, HttpStatus.OK); 
-	}
-	
-	@PostMapping(path= "/editUserDetails/{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> editUserDetails(@RequestBody Users user) {
-		return new ResponseEntity<String>("user details added", HttpStatus.OK);
 	}
 	
 }

@@ -112,7 +112,7 @@ public class ResumeController {
 		if(list == null) {
 			op.setError(true);
 			op.setMessage("not success");
-			op.setData("No Experience added");
+			op.setData("Experience not added");
 		}
 		else {
 			op.setError(false);
@@ -129,7 +129,7 @@ public class ResumeController {
 		if(list == null) {
 			op.setError(true);
 			op.setMessage("not success");
-			op.setData("No project details added");
+			op.setData("project-details not added");
 		}else {
 			op.setError(false);
 			op.setMessage("success");
@@ -145,7 +145,7 @@ public class ResumeController {
 		if(list == null) {
 			op.setError(true);
 			op.setMessage("not success");
-			op.setData("No skill details added");
+			op.setData("skill details not added");
 		}else {
 			op.setError(false);
 			op.setMessage("success");
@@ -157,20 +157,17 @@ public class ResumeController {
 	@GetMapping(path= "/getResume/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getResumeDetails(@PathVariable("id") String id) {
 		
-		Optional<Resume> opt = resumerepo.findById(id);
-		if(!opt.isPresent()) {
+		Optional<Resume> resume = resumerepo.findById(id);
+		if(!resume.isPresent()) {
 			op.setError(true);
 			op.setMessage("not success");
 			op.setData("Build your resume first");
 			return new ResponseEntity<Object>(op, HttpStatus.NOT_FOUND);
 		}
 		
-		Optional<Resume>resume = resumerepo.findById(id);
-		
 		String user = resume.get().getUser_id();
 		Optional<Users> u = userrepository.findById(user);
 		if(!u.get().isSession()) {
-		
 			op.setError(true);
 			op.setMessage("not success");
 			op.setData("Login First");
@@ -183,10 +180,6 @@ public class ResumeController {
 		
 		list.add(u);
 		
-		if(u.get().isOnetime()) {
-			u.get().setOnetime(false);
-			userrepository.save(u.get());
-		}
 		list.add(resumeservice.getEducation(id));
 		list.add(resumeservice.getSkills(id));
 		list.add(resumeservice.getProjects(id));
@@ -202,26 +195,61 @@ public class ResumeController {
 	}
 	
 	
+	@GetMapping(path= "/getOneProject/{resume_id}/{proj_id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> getOneProjectPage(@PathVariable("resume_id") String r_id, @PathVariable("proj_id") int p_id) {
+		
+		List<Optional<ProjectType>> list = resumeservice.getProjects(r_id);
+		Optional<ProjectType> list2 = resumeservice.getProject(list, p_id);
+		if(list == null || list2 == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("no data available");
+		}else {
+			op.setError(false);
+			op.setMessage("success");
+			op.setData(list2);
+		}
+		return new ResponseEntity<Object>(op, HttpStatus.OK); 
+	}
+	
+	
 	// ADD REQUESTS
 	
-	
-	@PostMapping(path= "/addResume/{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> addResumeDetails(@PathVariable("id") String id,@RequestBody Users user, @RequestBody Awards award,
-			@RequestBody Interests interest, @RequestBody Experience experience , @RequestBody EduType education,
-		    @RequestBody ProjectType projects , @RequestBody SkillType skills) {
-		
-		 if(resumeservice.addResume(id, user, award, interest, experience, education, projects, skills)) {
-			 	op.setError(false);
-				op.setMessage("success");
-				op.setData("Data saved");
-			 return new ResponseEntity<Output>(op, HttpStatus.OK); 
-		 }
-		
-		 	op.setError(true);
+	@PostMapping(path= "/addUserDetail/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addUserDetails(@PathVariable("id") String id, @RequestBody Users users){
+		Users user = resumeservice.addUserDetail(id, users);
+		if(user == null) {
+			op.setError(true);
 			op.setMessage("not success");
-			op.setData("please add appropriate data");
-		return new ResponseEntity<Output>(op, HttpStatus.OK); 
+			op.setData("data is not added");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(user);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
 	}
+	
+	
+	
+//	@PostMapping(path= "/addResume/{id}", consumes = "application/json", produces = "application/json")
+//	public ResponseEntity<?> addResumeDetails(@PathVariable("id") String id,@RequestBody Users user, @RequestBody Awards award,
+//			@RequestBody Interests interest, @RequestBody Experience experience , @RequestBody EduType education,
+//		    @RequestBody ProjectType projects , @RequestBody SkillType skills) {
+//		
+//		 if(resumeservice.addResume(id, user, award, interest, experience, education, projects, skills)) {
+//			 	op.setError(false);
+//				op.setMessage("success");
+//				op.setData("Data saved");
+//				
+//			 return new ResponseEntity<Output>(op, HttpStatus.OK); 
+//		 }
+//		
+//		 	op.setError(true);
+//			op.setMessage("not success");
+//			op.setData("please add appropriate data");
+//		return new ResponseEntity<Output>(op, HttpStatus.OK); 
+//	}
 	
 	@PostMapping(path= "/addAwards/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> addAwardDetails(@PathVariable("id") String id, @RequestBody Awards awards){
@@ -318,6 +346,20 @@ public class ResumeController {
 	
 	// EDIT DATA 
 	
+	@PostMapping(path= "/editUserDetail/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> editUserDetails(@PathVariable("id") String id ,@RequestBody Users user){
+		Users users = resumeservice.editUser(id, user);
+		if(users == null) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("data is not edited");
+			return new ResponseEntity<Output>(op, HttpStatus.NOT_FOUND);
+		}
+		op.setError(false);
+		op.setMessage("success");
+		op.setData(users);
+		return new ResponseEntity<Output>(op, HttpStatus.OK);
+	}
 	
 	@PostMapping(path= "/editExperience/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> editExperienceDetails(@PathVariable("id") String id ,@RequestBody Experience experience){
