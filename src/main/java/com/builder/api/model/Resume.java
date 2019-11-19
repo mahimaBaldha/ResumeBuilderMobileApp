@@ -13,14 +13,7 @@ public class Resume {
 	@Id
 	private String id;
 	private String user_id;
-//	private Users user;
-//	private Awards awards;
-//	private Experience experience;
-//	private Interests interests;
-//	private List<SkillType> skills;
-//	private List<ProjectType> projects;
-//	private List<EduType> educations;
-	
+
 
 	public String getId() {
 		return id;

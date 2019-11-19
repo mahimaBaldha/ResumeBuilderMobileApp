@@ -171,13 +171,19 @@ public class ResumeController {
 		Optional<Users> u = resumeservice.getUserDetails(id);
 		
 		list.add(u);
-		
-		list.add(resumeservice.getEducation(id));
-		list.add(resumeservice.getSkills(id));
-		list.add(resumeservice.getProjects(id));
-		list.add(resumeservice.getExperience(id));
-		list.add(resumeservice.getAwards(id));
-		list.add(resumeservice.getInterests(id));
+		try {
+			list.add(resumeservice.getEducation(id));
+			list.add(resumeservice.getSkills(id));
+			list.add(resumeservice.getProjects(id));
+			list.add(resumeservice.getExperience(id));
+			list.add(resumeservice.getAwards(id));
+			list.add(resumeservice.getInterests(id));
+		}
+		catch(Exception ex) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData(list);
+		}
 		
 		op.setError(false);
 		op.setMessage("success");
