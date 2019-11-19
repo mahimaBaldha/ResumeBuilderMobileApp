@@ -158,15 +158,17 @@ public class ResumeController {
 	public ResponseEntity<?> getResumeDetails(@PathVariable("id") String id) {
 		
 		Optional<Resume> resume = resumerepo.findById(id);
+		String user = resume.get().getUser_id();
+		Optional<Users> u = userrepository.findById(user);
 		if(!resume.isPresent()) {
 			op.setError(true);
 			op.setMessage("not success");
-			op.setData("Build your resume first");
+			op.setData(u);
 			return new ResponseEntity<Object>(op, HttpStatus.NOT_FOUND);
 		}
 		
-		String user = resume.get().getUser_id();
-		Optional<Users> u = userrepository.findById(user);
+//		String user = resume.get().getUser_id();
+//		Optional<Users> u = userrepository.findById(user);
 		if(!u.get().isSession()) {
 			op.setError(true);
 			op.setMessage("not success");
