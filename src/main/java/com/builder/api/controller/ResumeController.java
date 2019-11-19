@@ -166,18 +166,9 @@ public class ResumeController {
 			return new ResponseEntity<Object>(op, HttpStatus.NOT_FOUND);
 		}
 		
-		String user = resume.get().getUser_id();
-		Optional<Users> u = userrepository.findById(user);
-		if(!u.get().isSession()) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("Login First");
-			return new ResponseEntity<Object>(op, HttpStatus.OK); 
-		}
-		
 		List<Object> list = new ArrayList<Object>();
 		
-		u = resumeservice.getUserDetails(id);
+		Optional<Users> u = resumeservice.getUserDetails(id);
 		
 		list.add(u);
 		
