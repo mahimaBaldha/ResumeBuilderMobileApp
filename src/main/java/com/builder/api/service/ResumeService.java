@@ -73,78 +73,106 @@ public class ResumeService {
 
 
 	public List<Awards> getAwards(String id){
-		
-		List<Awards> aw = awardsrepo.findAll();
-		List<Awards> list = new ArrayList<>();
-		for(Awards ii: aw) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(ii);
+		try {
+			List<Awards> aw = awardsrepo.findAll();
+			List<Awards> list = new ArrayList<>();
+			for(Awards ii: aw) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(ii);
+				}
 			}
+			return list;
+		}catch(Exception ex) {
+			return null;
 		}
-		return list;
 	}
 	
 	public List<Experience> getExperience(String id){
-		List<Experience> l = exprepo.findAll();
-		List<Experience> list = new ArrayList<Experience>();
-		
-		for(Experience ii: l) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(ii);
+		try {
+			List<Experience> l = exprepo.findAll();
+			List<Experience> list = new ArrayList<Experience>();
+			
+			for(Experience ii: l) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(ii);
+				}
 			}
+			return list;
+			
+		}catch(Exception ex) {
+			return null;
 		}
-		return list;
+			
 	}
 	
 	public List<Interests> getInterests(String id){
-		List<Interests> l = intrepo.findAll();
-		List<Interests> list = new ArrayList<Interests>();
-		
-		for(Interests ii: l) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(ii);
+		try {
+			List<Interests> l = intrepo.findAll();
+			List<Interests> list = new ArrayList<Interests>();
+			
+			for(Interests ii: l) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(ii);
+				}
 			}
+			return list;
+		} 
+		catch(Exception ex) {
+			return null;
 		}
-		return list;
 	}
 	
 	public List<Optional<EduType>> getEducation(String id){
 		
-		List<Optional<EduType>> list = new ArrayList<>();
-		List<Education> lm = educationrepo.findAll();
-		
-		for(Education ii: lm) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(edutyperepository.findById(ii.getEdutype_id()));
+		try {
+			List<Optional<EduType>> list = new ArrayList<>();
+			List<Education> lm = educationrepo.findAll();
+			
+			for(Education ii: lm) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(edutyperepository.findById(ii.getEdutype_id()));
+				}
 			}
+			return list;
 		}
-		return list;
+		catch(Exception ex) {
+			return null;
+		}
 	}
 	
 	public List<Optional<ProjectType>> getProjects(String id){
-		
-		List<Optional<ProjectType>> list = new ArrayList<>();
-		List<Project> lm = projectrepo.findAll();
-		
-		for(Project ii: lm) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(projtyperepository.findById(ii.getProjtype_id()));
+		try {
+			List<Optional<ProjectType>> list = new ArrayList<>();
+			List<Project> lm = projectrepo.findAll();
+			
+			for(Project ii: lm) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(projtyperepository.findById(ii.getProjtype_id()));
+				}
 			}
+			return list;
 		}
-		return list;
+		catch(Exception ex) {
+			return null;
+		}
 	}
 	
 	public List<Optional<SkillType>> getSkills(String id){
 		
-		List<Optional<SkillType>> list = new ArrayList<>();
-		List<Skill> lm = skillrepo.findAll();
-		
-		for(Skill ii: lm) {
-			if(ii.getResume_id().equals(id)) {
-				list.add(skilltyperepository.findById(ii.getSkilltype_id()));
+		try {
+			List<Optional<SkillType>> list = new ArrayList<>();
+			List<Skill> lm = skillrepo.findAll();
+			
+			for(Skill ii: lm) {
+				if(ii.getResume_id().equals(id)) {
+					list.add(skilltyperepository.findById(ii.getSkilltype_id()));
+				}
 			}
+			return list;
 		}
-		return list;
+		catch(Exception ex) {
+			return null;
+		}
 	}
 	
 	
@@ -152,7 +180,6 @@ public class ResumeService {
 	public Users addUserDetail(String id, Users u1) {
 		
 		List<Users> list = userrepository.findAll();
-
 		for(Users u : list) {
 			if(u.isSession()) {
 				u.setAddress(u1.getAddress());
@@ -365,7 +392,18 @@ public class ResumeService {
 		}
 		return null;
 	}
-	
+
+
+	public void deleteEducation(int id) {
+		
+		List<Education> list = educationrepo.findAll();
+		for(Education education: list) {
+			if(education.getEdutype_id() == id) {
+				educationrepo.deleteById(education.getId());
+			}
+		}
+		edutyperepository.deleteById(id);
+	}
 	
 	
 }

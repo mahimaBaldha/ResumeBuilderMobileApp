@@ -57,15 +57,18 @@ public class ResumeController {
 	@GetMapping(path= "/getEducation/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getUserPage(@PathVariable("id") String id) {
 		
-		List<Optional<EduType>> list = resumeservice.getEducation(id);
-		if(list == null) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("No education details added");
-		}else {
+		try {
+			List<Optional<EduType>> list = resumeservice.getEducation(id);
 			op.setError(false);
 			op.setMessage("success");
 			op.setData(list);
+				
+		}
+		catch(Exception ex) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("No education details added");
+			
 		}
 		return new ResponseEntity<Object>(op, HttpStatus.OK); 
 	}
@@ -73,16 +76,16 @@ public class ResumeController {
 	@GetMapping(path= "/getAwards/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getAwards(@PathVariable("id") String id) {
 		
-		List<Awards> list = resumeservice.getAwards(id);
-		if(list == null) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("No Awards added");
-		}
-		else {
+		try {
+			List<Awards> list = resumeservice.getAwards(id);
 			op.setError(false);
 			op.setMessage("success");
 			op.setData(list);
+		}
+		catch(Exception ex) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("No Awards added");
 		}
 		return new ResponseEntity<Output>(op, HttpStatus.OK); 
 	}
@@ -90,16 +93,18 @@ public class ResumeController {
 	@GetMapping(path= "/getInterests/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getInterests(@PathVariable("id") String id) {
 		
-		List<Interests> list = resumeservice.getInterests(id);
-		if(list == null) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("No Interests added");
-		}
-		else {
+		
+		try{
+			List<Interests> list = resumeservice.getInterests(id);
 			op.setError(false);
 			op.setMessage("success");
 			op.setData(list);
+		}
+		catch(Exception ex) {
+			
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("No Interests added");
 		}
 		return new ResponseEntity<Output>(op, HttpStatus.OK); 
 	}
@@ -108,16 +113,16 @@ public class ResumeController {
 	@GetMapping(path= "/getExperience/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getExperience(@PathVariable("id") String id) {
 		
-		List<Experience> list = resumeservice.getExperience(id);
-		if(list == null) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("Experience not added");
-		}
-		else {
+		try {
+			List<Experience> list = resumeservice.getExperience(id);
 			op.setError(false);
 			op.setMessage("success");
 			op.setData(list);
+		}
+		catch(Exception ex) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("Experience not added");
 		}
 		return new ResponseEntity<Output>(op, HttpStatus.OK); 
 	}
@@ -125,15 +130,16 @@ public class ResumeController {
 	@GetMapping(path= "/getProjects/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getProjectPage(@PathVariable("id") String id) {
 		
-		List<Optional<ProjectType>> list = resumeservice.getProjects(id);
-		if(list == null) {
-			op.setError(true);
-			op.setMessage("not success");
-			op.setData("project-details not added");
-		}else {
+		try {
+			List<Optional<ProjectType>> list = resumeservice.getProjects(id);
 			op.setError(false);
 			op.setMessage("success");
 			op.setData(list);
+		}
+		catch(Exception ex) {
+			op.setError(true);
+			op.setMessage("not success");
+			op.setData("project-details not added");
 		}
 		return new ResponseEntity<Object>(op, HttpStatus.OK); 
 	}
@@ -141,15 +147,17 @@ public class ResumeController {
 	@GetMapping(path= "/getSkills/{id}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getSkillPage(@PathVariable("id") String id) {
 		
-		List<Optional<SkillType>> list = resumeservice.getSkills(id);
-		if(list == null) {
+		try {
+			List<Optional<SkillType>> list = resumeservice.getSkills(id);
+			op.setError(false);
+			op.setMessage("success");
+			op.setData(list);	
+		}
+		catch(Exception ex) {
 			op.setError(true);
 			op.setMessage("not success");
 			op.setData("skill details not added");
-		}else {
-			op.setError(false);
-			op.setMessage("success");
-			op.setData(list);
+			
 		}
 		return new ResponseEntity<Object>(op, HttpStatus.OK); 
 	}
@@ -172,12 +180,73 @@ public class ResumeController {
 		
 		list.add(u);
 		try {
-			list.add(resumeservice.getEducation(id));
-			list.add(resumeservice.getSkills(id));
-			list.add(resumeservice.getProjects(id));
-			list.add(resumeservice.getExperience(id));
-			list.add(resumeservice.getAwards(id));
-			list.add(resumeservice.getInterests(id));
+			
+			
+			List<Experience> ex = resumeservice.getExperience(id);
+			if(ex == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no experience found");
+				list.add(o);
+			}else
+				list.add(ex);
+			
+			List<Awards> aw = resumeservice.getAwards(id);
+			if(aw == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no experience found");
+				list.add(o);
+			}else
+				list.add(aw);
+			
+			List<Interests> l = resumeservice.getInterests(id); 
+			if(l == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no experience found");
+				list.add(o);
+			}else
+				list.add(l);
+			
+			List<Optional<EduType>> edu = resumeservice.getEducation(id);
+			if(edu == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no experience found");
+				list.add(o);
+			}else
+				list.add(edu);
+			
+			
+			List<Optional<ProjectType>> proj = resumeservice.getProjects(id);
+			if(proj == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no projects found");
+				
+				list.add(o);
+			}else
+				list.add(proj);
+			
+			
+			List<Optional<SkillType>> skill = resumeservice.getSkills(id);
+			if(skill == null) {
+				Output o = new Output();
+				o.setError(false);
+				o.setMessage("not success");
+				o.setData("no skills found");
+				
+				list.add(o);
+			}else
+				list.add(skill);
+			
+			
 		}
 		catch(Exception ex) {
 			op.setError(true);
@@ -462,6 +531,18 @@ public class ResumeController {
 	public ResponseEntity<?> deleteProjectpage(@PathVariable("id") int id) {
 		
 		resumeservice.deleteProject(id);
+		op.setError(false);
+		op.setMessage("success");
+		op.setData("Project deleted successfully");
+		
+		return new ResponseEntity<Output>(op, HttpStatus.OK); 
+	}
+	
+	
+	@GetMapping(path= "/deleteEducation/{id}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> deleteEducationpage(@PathVariable("id") int id) {
+		
+		resumeservice.deleteEducation(id);
 		op.setError(false);
 		op.setMessage("success");
 		op.setData("Project deleted successfully");
